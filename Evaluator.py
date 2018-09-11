@@ -1,13 +1,22 @@
 # -*- coding: utf-8 -*-
 """ test many algorithms using the same evaluation data
     by wrapping those algorithm with an EvaluatedAlgorithm instance
+    compare algorithms
+
     steps:
     1. create an EvaluationData instance given a data set
     2. create an EvaluatedAlgorithm instance for the algorithm to test
     3. call Evaluate function in EvaluatedAlgorithm, passing in the same  EvaluationData to measure the algorithm's performnace
+
+    AddAlgorithm(algorithm)
+    Evaluate()
+        dataset: EvaluatedDataSet
+        algorithms: EvaluatedAlgorithm[]
 """
 from EvaluationData import EvaluationData
 from EvaluatedAlgorithm import EvaluatedAlgorithm
+
+
 
 class Evaluator:
 
@@ -79,3 +88,42 @@ class Evaluator:
 
             for ratings in recommendations[:10]:
                 print(ml.getMovieName(ratings[0]), ratings[1])
+
+
+def have_fun():
+    from MovieLens import MovieLens
+    from surprise import SVD
+    from surprise import NormalPredictor
+
+    import random
+    import numpy as np
+
+    np.random.seed(0)
+    random.seed(0)
+
+    # Load up common data set for the recommender algorithms
+    # (evaluationData, rankings) = LoadMovieLensData()
+    ml = MovieLens()
+    print("Loading movie ratings...")
+    evaluationData = ml.loadMovieLensLatestSmall()
+    print("\nComputing movie popularity ranks so we can measure novelty later...")
+    rankings = ml.getPopularityRanks() # for novelty
+
+    # Construct an Evaluator to, you know, evaluate them
+    evaluator = Evaluator(evaluationData, rankings)
+
+    # Throw in an SVD recommender
+    SVDAlgorithm = SVD(random_state=10)
+    evaluator.AddAlgorithm(SVDAlgorithm, "SVD")
+
+    # Just make random recommendations
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+
+    # Fight!
+    evaluator.Evaluate(True)
+
+
+if __name__ == '__main__':
+    have_fun()
