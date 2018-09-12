@@ -22,6 +22,7 @@ from surprise import NormalPredictor
 
 import random
 import numpy as np
+import time
 
 class Evaluator:
 
@@ -110,12 +111,18 @@ def LoadMovieLensData():
 def have_fun():
     np.random.seed(0)
     random.seed(0)
-
+    start_t = time.time()
     # Load up common data set for the recommender algorithms
     (evaluationData, rankings) = LoadMovieLensData()
 
+    print(f'%%%%%%%time consumption: {time.time() - start_t} for LoadMovieLensData()')
+    start_t = time.time()
+
     # Construct an Evaluator to, you know, evaluate them
     evaluator = Evaluator(evaluationData, rankings)
+
+    print(f'%%%%%%%time consumption: {time.time() - start_t} for create an evaluator instance')
+    start_t = time.time()
 
     # Throw in an SVD recommender
     SVDAlgorithm = SVD(random_state=10)
@@ -127,8 +134,10 @@ def have_fun():
 
 
     # Fight!
+    tart_t = time.time()
     evaluator.Evaluate(False)
-
+    print(f'%%%%%%%time consumption: {time.time() - start_t} for evaluator.Evaluate()')
+    start_t = time.time()
 
 if __name__ == '__main__':
     have_fun()
