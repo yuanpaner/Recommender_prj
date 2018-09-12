@@ -42,7 +42,8 @@ class EvaluatedAlgorithm:
         metrics["RMSE"] = RecommenderMetrics.RMSE(predictions)
         metrics["MAE"] = RecommenderMetrics.MAE(predictions)
 
-        if (doTopN):
+        # if (doTopN):
+        if False:
             # Evaluate top-10 with Leave One Out testing
             if (verbose):
                 print("Evaluating top-N with leave-one-out...")

@@ -1,3 +1,5 @@
+""" use pickle to save algorithm and data to avoid repeated calculation
+"""
 import pickle
 import os
 
@@ -40,21 +42,21 @@ def Load(file_name, verbose = 0):
             print("file doesn't exist, loading fails")
         return None, None
 
-def SavePopularity(file_name, populairty, verbose = 0):
+def SaveData(file_name, data, verbose = 0):
     save_file_name = folder_path+'/' + file_name
-    dump_obj = {'rankings': populairty}
+    dump_obj = {'data': data}
     pickle.dump(dump_obj, open(save_file_name, 'wb'),
                 protocol=pickle.HIGHEST_PROTOCOL)
     if verbose:
         print(f'The dump has been saved as file {save_file_name}')
 
-def LoadPopularity(file_name, verbose = 0):
+def LoadData(file_name, verbose = 0):
     load_file_name = folder_path+'/' + file_name
     if os.path.exists(load_file_name):
         dump_obj = pickle.load(open(load_file_name, 'rb'))
         if verbose:
             print(f"{load_file_name} load successfully")
-        return dump_obj['rankings']
+        return dump_obj['data']
     else:
         if verbose:
             print(f"{load_file_name} doesn't exist, loading fails")

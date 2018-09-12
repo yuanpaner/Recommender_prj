@@ -38,8 +38,8 @@ class MovieLens:
             self.moviesPath = self.folder_20m + self.moviesFile
 
         if not os.path.exists(self.ratingsPath) or not os.path.exists(self.moviesPath):
-            print("File Error")
-            return None
+            raise NameError('File doesn"t Exist')
+            # return None
 
 
         ratingsDataset = 0
@@ -82,7 +82,7 @@ class MovieLens:
         return userRatings
 
     def getPopularityRanks(self):
-        rankings = MyDump.LoadPopularity('Popularity_ranking',1)
+        rankings = MyDump.LoadData('Popularity_ranking',1)
         if rankings:
             return rankings
 
@@ -98,7 +98,7 @@ class MovieLens:
         for movieID, ratingCount in sorted(ratings.items(), key=lambda x: x[1], reverse=True):
             rankings[movieID] = rank
             rank += 1
-        MyDump.SavePopularity('Popularity_ranking', rankings, 1)
+        MyDump.SaveData('Popularity_ranking', rankings, 1)
         return rankings
 
     def getGenres(self):
