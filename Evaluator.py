@@ -16,7 +16,12 @@
 from EvaluationData import EvaluationData
 from EvaluatedAlgorithm import EvaluatedAlgorithm
 
+from MovieLens import MovieLens
+from surprise import SVD
+from surprise import NormalPredictor
 
+import random
+import numpy as np
 
 class Evaluator:
 
@@ -29,6 +34,19 @@ class Evaluator:
     def AddAlgorithm(self, algorithm, name):
         alg = EvaluatedAlgorithm(algorithm, name)
         self.algorithms.append(alg)
+
+    def LegendPrint():
+        print("\nLegend:\n")
+        print("RMSE:      Root Mean Squared Error. Lower values mean better accuracy.")
+        print("MAE:       Mean Absolute Error. Lower values mean better accuracy.")
+        if (doTopN):
+            print("HR:        Hit Rate; how often we are able to recommend a left-out rating. Higher is better.")
+            print("cHR:       Cumulative Hit Rate; hit rate, confined to ratings above a certain threshold. Higher is better.")
+            print("ARHR:      Average Reciprocal Hit Rank - Hit rate that takes the ranking into account. Higher is better." )
+            print("Coverage:  Ratio of users for whom recommendations above a certain threshold exist. Higher is better.")
+            print("Diversity: 1-S, where S is the average similarity score between every possible pair of recommendations")
+            print("           for a given user. Higher means more diverse.")
+            print("Novelty:   Average popularity rank of recommended items. Higher means more novel.")
 
     def Evaluate(self, doTopN):
         results = {}
@@ -51,17 +69,7 @@ class Evaluator:
             for (name, metrics) in results.items():
                 print("{:<10} {:<10.4f} {:<10.4f}".format(name, metrics["RMSE"], metrics["MAE"]))
 
-        print("\nLegend:\n")
-        print("RMSE:      Root Mean Squared Error. Lower values mean better accuracy.")
-        print("MAE:       Mean Absolute Error. Lower values mean better accuracy.")
-        if (doTopN):
-            print("HR:        Hit Rate; how often we are able to recommend a left-out rating. Higher is better.")
-            print("cHR:       Cumulative Hit Rate; hit rate, confined to ratings above a certain threshold. Higher is better.")
-            print("ARHR:      Average Reciprocal Hit Rank - Hit rate that takes the ranking into account. Higher is better." )
-            print("Coverage:  Ratio of users for whom recommendations above a certain threshold exist. Higher is better.")
-            print("Diversity: 1-S, where S is the average similarity score between every possible pair of recommendations")
-            print("           for a given user. Higher means more diverse.")
-            print("Novelty:   Average popularity rank of recommended items. Higher means more novel.")
+        # LegendPrint()
 
     def SampleTopNRecs(self, ml, testSubject=85, k=10):
 
@@ -90,24 +98,21 @@ class Evaluator:
                 print(ml.getMovieName(ratings[0]), ratings[1])
 
 
+def LoadMovieLensData():
+    ml = MovieLens()
+    print("\nLoading movie ratings...")
+    data = ml.loadMovieLensLatestSmall()
+    print("\nComputing movie popularity ranks so we can measure novelty later...")
+    rankings = ml.getPopularityRanks() # for novelty
+    return (data, rankings)
+
+
 def have_fun():
-    from MovieLens import MovieLens
-    from surprise import SVD
-    from surprise import NormalPredictor
-
-    import random
-    import numpy as np
-
     np.random.seed(0)
     random.seed(0)
 
     # Load up common data set for the recommender algorithms
-    # (evaluationData, rankings) = LoadMovieLensData()
-    ml = MovieLens()
-    print("Loading movie ratings...")
-    evaluationData = ml.loadMovieLensLatestSmall()
-    print("\nComputing movie popularity ranks so we can measure novelty later...")
-    rankings = ml.getPopularityRanks() # for novelty
+    (evaluationData, rankings) = LoadMovieLensData()
 
     # Construct an Evaluator to, you know, evaluate them
     evaluator = Evaluator(evaluationData, rankings)
@@ -122,7 +127,7 @@ def have_fun():
 
 
     # Fight!
-    evaluator.Evaluate(True)
+    evaluator.Evaluate(False)
 
 
 if __name__ == '__main__':

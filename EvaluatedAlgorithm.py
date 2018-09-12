@@ -6,12 +6,16 @@
     collaborate with:
         RecommenderMetrics
         EvaluationData
+    used by:
+        Evaluator
 """
 from RecommenderMetrics import RecommenderMetrics
 from EvaluationData import EvaluationData
+import os
+from surprise import dump
 
 class EvaluatedAlgorithm:
-
+    folder_path = './DumpFiles'
     def __init__(self, algorithm, name):
         self.algorithm = algorithm
         self.name = name
@@ -20,8 +24,22 @@ class EvaluatedAlgorithm:
         metrics = {}
         # Compute accuracy
         if (verbose):
-            print("Evaluating accuracy...")
-        self.algorithm.fit(evaluationData.GetTrainSet())
+            print("\nEvaluating accuracy...")
+
+
+        if not os.path.exists(self.__class__.folder_path):
+            print("path doesn't exist. trying to make")
+            os.makedirs(self.__class__.folder_path)
+
+        file_name = self.__class__.folder_path+'/'+self.name+'_acc'
+        if os.path.exists(file_name):
+            _, self.algorithm = dump.load(file_name)
+            print(f'{file_name} file exist, only need to load the trained algorithm')
+        else:
+            self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
+            dump.dump(file_name, algo=self.algorithm)
+            print(f'{file_name} SAVE sucessfully')
+
         predictions = self.algorithm.test(evaluationData.GetTestSet())
         metrics["RMSE"] = RecommenderMetrics.RMSE(predictions)
         metrics["MAE"] = RecommenderMetrics.MAE(predictions)
@@ -67,7 +85,10 @@ class EvaluatedAlgorithm:
         if (verbose):
             print("Analysis complete.")
 
+        # SaveAlg()
+
         return metrics
+
 
     def GetName(self):
         return self.name

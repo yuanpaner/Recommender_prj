@@ -18,13 +18,14 @@ class EvaluationData:
 
         #Build a full training set for evaluating overall properties
         self.fullTrainSet = data.build_full_trainset()
-        self.fullAntiTestSet = self.fullTrainSet.build_anti_testset() # return  A list of tuples ``(uid, iid, fill)`` where ids are raw ids. The ratings are all the ratings that are **not** in the trainset
+        #And build an anti-test-set for building predictions
+        self.fullAntiTestSet = self.fullTrainSet.build_anti_testset() # return  A list of tuples ``(uid, iid, fill)`` where ids are raw ids. The data set are all the ratings that are **not** in the trainset
 
-        #Build a 75/25 train/test split for measuring accuracy
+        # Build a 75/25 train/test split for measuring accuracy
+        # todo, k-folder cross validation
         self.trainSet, self.testSet = train_test_split(data, test_size=.25, random_state=1)
 
-        #Build a "leave one out" train/test split for evaluating top-N recommenders
-        #And build an anti-test-set for building predictions
+        #Build a "leave one out" train/test split for evaluating top-N recommenders, extract one rated movie from each user
         LOOCV = LeaveOneOut(n_splits=1, random_state=1)
         for train, test in LOOCV.split(data):
             self.LOOCVTrain = train
@@ -44,6 +45,9 @@ class EvaluationData:
         return self.fullAntiTestSet
 
     def GetAntiTestSetForUser(self, testSubject):
+        """ return a list of moviedId(raw) which user hasn't rated already
+            from the full training set
+        """
         trainset = self.fullTrainSet
         fill = trainset.global_mean
         anti_testset = []
