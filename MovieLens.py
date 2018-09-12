@@ -9,6 +9,8 @@ from surprise import Reader
 from collections import defaultdict
 import numpy as np
 
+import MyDump
+
 class MovieLens:
 
     movieID_to_name = {}
@@ -80,6 +82,10 @@ class MovieLens:
         return userRatings
 
     def getPopularityRanks(self):
+        rankings = MyDump.LoadPopularity('Popularity_ranking',1)
+        if rankings:
+            return rankings
+
         ratings = defaultdict(int)
         rankings = defaultdict(int)
         with open(self.ratingsPath, newline='') as csvfile:
@@ -92,6 +98,7 @@ class MovieLens:
         for movieID, ratingCount in sorted(ratings.items(), key=lambda x: x[1], reverse=True):
             rankings[movieID] = rank
             rank += 1
+        MyDump.SavePopularity('Popularity_ranking', rankings, 1)
         return rankings
 
     def getGenres(self):

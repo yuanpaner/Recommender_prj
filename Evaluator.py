@@ -51,7 +51,7 @@ class Evaluator:
     def Evaluate(self, doTopN):
         results = {}
         for algorithm in self.algorithms:
-            print("Evaluating ", algorithm.GetName(), "...")
+            print("\nEvaluating ", algorithm.GetName(), "...")
             results[algorithm.GetName()] = algorithm.Evaluate(self.dataset, doTopN)
 
         # Print results
@@ -102,7 +102,7 @@ def LoadMovieLensData():
     ml = MovieLens()
     print("\nLoading movie ratings...")
     data = ml.loadMovieLensLatestSmall()
-    print("\nComputing movie popularity ranks so we can measure novelty later...")
+    print("Computing movie popularity ranks so we can measure novelty later...")
     rankings = ml.getPopularityRanks() # for novelty
     return (data, rankings)
 

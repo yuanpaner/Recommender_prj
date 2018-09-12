@@ -12,7 +12,7 @@
 from RecommenderMetrics import RecommenderMetrics
 from EvaluationData import EvaluationData
 import os
-from surprise import dump
+import MyDump
 
 class EvaluatedAlgorithm:
     folder_path = './DumpFiles'
@@ -24,23 +24,21 @@ class EvaluatedAlgorithm:
         metrics = {}
         # Compute accuracy
         if (verbose):
-            print("\nEvaluating accuracy...")
+            print("Evaluating accuracy...")
 
 
-        if not os.path.exists(self.__class__.folder_path):
-            print("path doesn't exist. trying to make")
-            os.makedirs(self.__class__.folder_path)
-
-        file_name = self.__class__.folder_path+'/'+self.name+'_acc'
-        if os.path.exists(file_name):
-            _, self.algorithm = dump.load(file_name)
-            print(f'{file_name} file exist, only need to load the trained algorithm')
-        else:
+        file_name = self.name+'_acc'
+        pr, al = MyDump.Load(file_name, 1)
+        if al == None or pr == None:
             self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
-            dump.dump(file_name, algo=self.algorithm)
-            print(f'{file_name} SAVE sucessfully')
+            predictions = self.algorithm.test(evaluationData.GetTestSet())
+            MyDump.Save(file_name, predictions, self.algorithm, 1)
+        else:
+            predictions = pr
+            self.algorithm = al
 
-        predictions = self.algorithm.test(evaluationData.GetTestSet())
+        # self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
+        # predictions = self.algorithm.test(evaluationData.GetTestSet())
         metrics["RMSE"] = RecommenderMetrics.RMSE(predictions)
         metrics["MAE"] = RecommenderMetrics.MAE(predictions)
 
