@@ -24,12 +24,20 @@ import random
 import numpy as np
 import time
 
+import MyDump
+
 class Evaluator:
 
     algorithms = []
 
-    def __init__(self, dataset, rankings):
-        ed = EvaluationData(dataset, rankings)
+    def __init__(self, dataset, rankings, load = False):
+        ed = None
+        if load:
+            _, _, ed = MyDump.Load('EvaluationData', 1)
+        if ed == None :
+            ed = EvaluationData(dataset, rankings)
+            if load:
+                MyDump.Save(file_name = 'EvaluationData', data = ed, verbose = 1)
         self.dataset = ed
 
     def AddAlgorithm(self, algorithm, name):
@@ -49,11 +57,11 @@ class Evaluator:
             print("           for a given user. Higher means more diverse.")
             print("Novelty:   Average popularity rank of recommended items. Higher means more novel.")
 
-    def Evaluate(self, doTopN):
+    def Evaluate(self, doTopN, load = False):
         results = {}
         for algorithm in self.algorithms:
             print("\nEvaluating ", algorithm.GetName(), "...")
-            results[algorithm.GetName()] = algorithm.Evaluate(self.dataset, doTopN)
+            results[algorithm.GetName()] = algorithm.Evaluate(self.dataset, doTopN, verbose = True, load = load)
 
         # Print results
         print("\n")
@@ -111,22 +119,26 @@ def LoadMovieLensData():
 def have_fun():
     np.random.seed(0)
     random.seed(0)
+    loader = True
     start_t = time.time()
+
     # Load up common data set for the recommender algorithms
     # (evaluationData, rankings) = LoadMovieLensData()
-    evaluationData = MyDump.Load('ratingsDataset', 1)
-    rankings = MyDump.Load('Popularity_rankings',1)
+    # MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
+    # MyDump.Save('rankings', data = rankings, verbose = 1)
+
+    _,_,evaluationData = MyDump.Load('ratingsDataset', 1)
+    _,_,rankings = MyDump.Load('rankings',1)
     if evaluationData == None or rankings == None:
-        (evaluationData, rankings) = LoadMovieLensData()
-        MyDump.Save('ratingsDataset', data = evaluationData, 1)
-        MyDump.Save('Popularity_rankings', data = rankings, 1)
-
-
-
+        (evaluationData, rankings) = LoadMovieLensData() # meat
+        MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
+        MyDump.Save('rankings', data = rankings, verbose = 1)
     print(f'------time consumption: {time.time() - start_t} for LoadMovieLensData()')
     start_t = time.time()
+
+
     # Construct an Evaluator to, you know, evaluate them
-    evaluator = Evaluator(evaluationData, rankings)
+    evaluator = Evaluator(dataset = evaluationData, rankings = rankings, load = loader)
 
     print(f'------time consumption: {time.time() - start_t} for create an evaluator instance')
     start_t = time.time()
@@ -142,7 +154,7 @@ def have_fun():
 
     # Fight!
     start_t = time.time()
-    evaluator.Evaluate(False)
+    evaluator.Evaluate(True, loader) # current not consider the topN
     print(f'------time consumption: {time.time() - start_t} for evaluator.Evaluate()')
     start_t = time.time()
 
