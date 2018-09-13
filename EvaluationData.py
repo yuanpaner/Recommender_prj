@@ -9,7 +9,6 @@
 from surprise.model_selection import train_test_split
 from surprise.model_selection import LeaveOneOut
 from surprise import KNNBaseline
-import MyDump
 
 class EvaluationData:
 
@@ -36,15 +35,8 @@ class EvaluationData:
 
         #Compute similarty matrix between items so we can measure diversity
         sim_options = {'name': 'cosine', 'user_based': False}
-        file_name = 'similarity_item'
-        _ , simsAlgo = MyDump.Load(file_name,1)
-        if simsAlgo == None:
-            self.simsAlgo = KNNBaseline(sim_options=sim_options)
-            self.simsAlgo.fit(self.fullTrainSet)
-            MyDump.Save(file_name, None, self.simsAlgo, 1)
-        else:
-            self.simsAlgo = simsAlgo
-
+        self.simsAlgo = KNNBaseline(sim_options=sim_options)
+        self.simsAlgo.fit(self.fullTrainSet)
 
 
         # sim_options = {'name': 'cosine', 'user_based': False}

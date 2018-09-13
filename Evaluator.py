@@ -113,15 +113,22 @@ def have_fun():
     random.seed(0)
     start_t = time.time()
     # Load up common data set for the recommender algorithms
-    (evaluationData, rankings) = LoadMovieLensData()
+    # (evaluationData, rankings) = LoadMovieLensData()
+    evaluationData = MyDump.Load('ratingsDataset', 1)
+    rankings = MyDump.Load('Popularity_rankings',1)
+    if evaluationData == None or rankings == None:
+        (evaluationData, rankings) = LoadMovieLensData()
+        MyDump.Save('ratingsDataset', data = evaluationData, 1)
+        MyDump.Save('Popularity_rankings', data = rankings, 1)
 
-    print(f'%%%%%%%time consumption: {time.time() - start_t} for LoadMovieLensData()')
+
+
+    print(f'------time consumption: {time.time() - start_t} for LoadMovieLensData()')
     start_t = time.time()
-
     # Construct an Evaluator to, you know, evaluate them
     evaluator = Evaluator(evaluationData, rankings)
 
-    print(f'%%%%%%%time consumption: {time.time() - start_t} for create an evaluator instance')
+    print(f'------time consumption: {time.time() - start_t} for create an evaluator instance')
     start_t = time.time()
 
     # Throw in an SVD recommender
@@ -134,9 +141,9 @@ def have_fun():
 
 
     # Fight!
-    tart_t = time.time()
+    start_t = time.time()
     evaluator.Evaluate(False)
-    print(f'%%%%%%%time consumption: {time.time() - start_t} for evaluator.Evaluate()')
+    print(f'------time consumption: {time.time() - start_t} for evaluator.Evaluate()')
     start_t = time.time()
 
 if __name__ == '__main__':

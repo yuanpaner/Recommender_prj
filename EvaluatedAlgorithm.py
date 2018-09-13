@@ -12,7 +12,6 @@
 from RecommenderMetrics import RecommenderMetrics
 from EvaluationData import EvaluationData
 import os
-import MyDump
 
 class EvaluatedAlgorithm:
     folder_path = './DumpFiles'
@@ -27,15 +26,8 @@ class EvaluatedAlgorithm:
             print("Evaluating accuracy...")
 
 
-        file_name = self.name+'_acc'
-        pr, al = MyDump.Load(file_name, 1)
-        if al == None or pr == None:
-            self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
-            predictions = self.algorithm.test(evaluationData.GetTestSet())
-            MyDump.Save(file_name, predictions, self.algorithm, 1)
-        else:
-            predictions = pr
-            self.algorithm = al
+        self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
+        predictions = self.algorithm.test(evaluationData.GetTestSet())
 
         # self.algorithm.fit(evaluationData.GetTrainSet()) # 75%
         # predictions = self.algorithm.test(evaluationData.GetTestSet())
