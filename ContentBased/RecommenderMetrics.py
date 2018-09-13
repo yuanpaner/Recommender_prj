@@ -6,25 +6,12 @@ from collections import defaultdict
 class RecommenderMetrics:
 
     def MAE(predictions):
-        """ Mean Absolute Error
-            (userID, movieID, actualRating, estimatedRating, _) in predictions
-        """
         return accuracy.mae(predictions, verbose=False)
 
     def RMSE(predictions):
-        """ Root Mean Squared Error """
         return accuracy.rmse(predictions, verbose=False)
 
     def GetTopN(predictions, n=10, minimumRating=4.0):
-        """ return topN {userID:[movieID, estimatedRating_sorted]}
-            for all movies with score above minimumRating
-
-            n: # items to recommend
-            minimumRating: threshold
-
-            input predictions [userID, movieID, actualRating, estimatedRating, _]
-            return topN { user:(movie, score_sorted), ...}
-        """
         topN = defaultdict(list)
 
 
@@ -39,10 +26,6 @@ class RecommenderMetrics:
         return topN
 
     def HitRate(topNPredicted, leftOutPredictions):
-        """ leftOutPredictions collabarates with surprise.model_selection.LeaveOneOut
-            Leave-one-out cross validation
-            hitrate = hits / users
-        """
         hits = 0
         total = 0
 
@@ -50,11 +33,9 @@ class RecommenderMetrics:
         for leftOut in leftOutPredictions:
             userID = leftOut[0]
             leftOutMovieID = leftOut[1]
+            # Is it in the predicted top 10 for this user?
             hit = False
             for movieID, predictedRating in topNPredicted[int(userID)]:
-                """ leftOut movie exists in our topNprediction
-                    hit success.
-                """
                 if (int(leftOutMovieID) == int(movieID)):
                     hit = True
                     break
@@ -67,8 +48,6 @@ class RecommenderMetrics:
         return hits/total
 
     def CumulativeHitRate(topNPredicted, leftOutPredictions, ratingCutoff=0):
-        """ nearly the same as hit rate except including a ratingCutoff
-        """
         hits = 0
         total = 0
 
@@ -112,8 +91,6 @@ class RecommenderMetrics:
             print (rating, hits[rating] / total[rating])
 
     def AverageReciprocalHitRank(topNPredicted, leftOutPredictions):
-        """ ARHR = summation(1/rank_movie_i_to_user) / users
-        """
         summation = 0
         total = 0
         # For each left-out rating
@@ -148,10 +125,6 @@ class RecommenderMetrics:
         return hits / numUsers
 
     def Diversity(topNPredicted, simsAlgo):
-        """ 1 - similarity(a matrix)
-            intense computation
-            in real world, need to sample
-        """
         n = 0
         total = 0
         simsMatrix = simsAlgo.compute_similarities()
@@ -170,8 +143,6 @@ class RecommenderMetrics:
         return (1-S)
 
     def Novelty(topNPredicted, rankings):
-        """ mean popularity rank of recommended items
-        """
         n = 0
         total = 0
         for userID in topNPredicted.keys():

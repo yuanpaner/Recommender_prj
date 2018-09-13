@@ -2,6 +2,7 @@
 """
 import pickle
 import os
+import MovieLens
 
 folder_path = './DumpFiles'
 
@@ -42,3 +43,12 @@ def Load(file_name, verbose = 0):
         if verbose:
             print("file doesn't exist, loading FAILS")
         return None, None, None
+
+
+def LoadMovieLensData():
+    ml = MovieLens()
+    print("\nLoading movie ratings...")
+    data = ml.loadMovieLensLatestSmall()
+    print("Computing movie popularity ranks so we can measure novelty later...")
+    rankings = ml.getPopularityRanks() # for novelty
+    return (ml, data, rankings)

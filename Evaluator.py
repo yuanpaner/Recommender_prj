@@ -107,13 +107,13 @@ class Evaluator:
                 print(ml.getMovieName(ratings[0]), ratings[1])
 
 
-def LoadMovieLensData():
-    ml = MovieLens()
-    print("\nLoading movie ratings...")
-    data = ml.loadMovieLensLatestSmall()
-    print("Computing movie popularity ranks so we can measure novelty later...")
-    rankings = ml.getPopularityRanks() # for novelty
-    return (data, rankings)
+# def LoadMovieLensData():
+#     ml = MovieLens()
+#     print("\nLoading movie ratings...")
+#     data = ml.loadMovieLensLatestSmall()
+#     print("Computing movie popularity ranks so we can measure novelty later...")
+#     rankings = ml.getPopularityRanks() # for novelty
+#     return (ml, data, rankings)
 
 
 def have_fun():
@@ -130,7 +130,7 @@ def have_fun():
     _,_,evaluationData = MyDump.Load('ratingsDataset', 1)
     _,_,rankings = MyDump.Load('rankings',1)
     if evaluationData == None or rankings == None:
-        (evaluationData, rankings) = LoadMovieLensData() # meat
+        (_, evaluationData, rankings) = MyDump.LoadMovieLensData() # meat
         MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
         MyDump.Save('rankings', data = rankings, verbose = 1)
     print(f'------time consumption: {time.time() - start_t} for LoadMovieLensData()')

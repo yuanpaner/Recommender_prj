@@ -13,32 +13,13 @@ class MovieLens:
 
     movieID_to_name = {}
     name_to_movieID = {}
-    small_folder = './ml-latest-small'
-    folder_20m = './ml-20m'
-    ratingsFile = '/ratings.csv'
-    moviesFile = '/movies.csv'
-    def __init__(self):
-        # if os.path.exists(ratingsPath) and os.path.exists(moviesPath)
-        self.ratingsPath = self.small_folder + self.ratingsFile # raw data
-        self.moviesPath = self.small_folder + self.moviesFile # raw data
+    ratingsPath = '../ml-latest-small/ratings.csv'
+    moviesPath = '../ml-latest-small/movies.csv'
+    
+    def loadMovieLensLatestSmall(self):
 
-    def loadMovieLens20m(self):
-        return loadMovieLensLatestSmall(load_large = True)
-    def loadMovieLensLatestSmall(self, load_large = False):
-        # Look for files relative to the directory we are running from, for more organized folder
-        # error if i cd to this folder
-        if os.path.dirname(sys.argv[0]):
-            print("running file location: ", os.path.dirname(sys.argv[0]))
-            os.chdir(os.path.dirname(sys.argv[0]))
-
-        if load_large:
-            self.ratingsPath = self.folder_20m + self.ratingsFile
-            self.moviesPath = self.folder_20m + self.moviesFile
-
-        if not os.path.exists(self.ratingsPath) or not os.path.exists(self.moviesPath):
-            raise NameError('File doesn"t Exist')
-            # return None
-
+        # Look for files relative to the directory we are running from
+        os.chdir(os.path.dirname(sys.argv[0]))
 
         ratingsDataset = 0
         self.movieID_to_name = {}
@@ -60,8 +41,6 @@ class MovieLens:
         return ratingsDataset
 
     def getUserRatings(self, user):
-        """ faster than using pandas.DataFrame (yuan)
-        """
         userRatings = []
         hitUser = False
         with open(self.ratingsPath, newline='') as csvfile:
@@ -93,7 +72,7 @@ class MovieLens:
             rankings[movieID] = rank
             rank += 1
         return rankings
-
+    
     def getGenres(self):
         genres = defaultdict(list)
         genreIDs = {}
@@ -119,10 +98,10 @@ class MovieLens:
             bitfield = [0] * maxGenreID
             for genreID in genreIDList:
                 bitfield[genreID] = 1
-            genres[movieID] = bitfield
-
+            genres[movieID] = bitfield            
+        
         return genres
-
+    
     def getYears(self):
         p = re.compile(r"(?:\((\d{4})\))?\s*$")
         years = defaultdict(int)
@@ -137,11 +116,8 @@ class MovieLens:
                 if year:
                     years[movieID] = int(year)
         return years
-
+    
     def getMiseEnScene(self):
-        """ get other information about the item(properties)
-            not used in my project
-        """
         mes = defaultdict(list)
         with open("LLVisualFeatures13K_Log.csv", newline='') as csvfile:
             mesReader = csv.reader(csvfile)
@@ -158,13 +134,13 @@ class MovieLens:
                 mes[movieID] = [avgShotLength, meanColorVariance, stddevColorVariance,
                    meanMotion, stddevMotion, meanLightingKey, numShots]
         return mes
-
+    
     def getMovieName(self, movieID):
         if movieID in self.movieID_to_name:
             return self.movieID_to_name[movieID]
         else:
             return ""
-
+        
     def getMovieID(self, movieName):
         if movieName in self.name_to_movieID:
             return self.name_to_movieID[movieName]
