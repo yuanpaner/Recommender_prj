@@ -2,7 +2,7 @@
 """
 import pickle
 import os
-import MovieLens
+from MovieLens import MovieLens
 
 folder_path = './DumpFiles'
 

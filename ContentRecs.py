@@ -6,22 +6,17 @@ from surprise import NormalPredictor
 import random
 import numpy as np
 
-def LoadMovieLensData():
-    ml = MovieLens()
-    print("Loading movie ratings...")
-    data = ml.loadMovieLensLatestSmall()
-    print("\nComputing movie popularity ranks so we can measure novelty later...")
-    rankings = ml.getPopularityRanks()
-    return (ml, data, rankings)
+import MyDump
+
 
 np.random.seed(0)
 random.seed(0)
 
 # Load up common data set for the recommender algorithms
-(ml, evaluationData, rankings) = LoadMovieLensData()
+(ml, evaluationData, rankings) = MyDump.LoadMovieLensData()
 
 # Construct an Evaluator to, you know, evaluate them
-evaluator = Evaluator(evaluationData, rankings)
+evaluator = Evaluator(evaluationData, rankings, load = True)
 
 contentKNN = ContentKNNAlgorithm()
 evaluator.AddAlgorithm(contentKNN, "ContentKNN")
@@ -30,6 +25,6 @@ evaluator.AddAlgorithm(contentKNN, "ContentKNN")
 Random = NormalPredictor()
 evaluator.AddAlgorithm(Random, "Random")
 
-evaluator.Evaluate(False)
+evaluator.Evaluate(False, True) # not topN, able load
 
 evaluator.SampleTopNRecs(ml)

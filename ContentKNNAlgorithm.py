@@ -20,7 +20,7 @@ class ContentKNNAlgorithm(AlgoBase):
         self.k = k
 
     def fit(self, trainset):
-        AlgoBase.fit(self, trainset)
+        AlgoBase.fit(self, trainset) # to get self.trainset
 
         # Compute item similarity matrix based on content attributes
 
@@ -28,7 +28,7 @@ class ContentKNNAlgorithm(AlgoBase):
         ml = MovieLens()
         genres = ml.getGenres()
         years = ml.getYears()
-        mes = ml.getMiseEnScene()
+        # mes = ml.getMiseEnScene()
 
         print("Computing content-based similarity matrix...")
 
