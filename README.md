@@ -43,7 +43,7 @@ Pearson similarity based on ranks, not ratings.
 * Jaccard Similarity  
 
 
-## Model-Based, learn the features  
+## Model-Based by Matrix Factorization, learn the features  
 latent features  
 
 * PCA  
@@ -57,7 +57,12 @@ Using machine learning achieve the parameters, has good performance but hard to 
 - [ ] Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.    
 
 ## Deep Learning in Recommender by tensorflow  
+Recommendation is a pattern recognition problem actually, which is looking for a very complex pattern based on behavior of other people. So MF can be modeled by NN.  
 
+* RBM(restricted boltzmann machine)
+visible layer -> hidden layer -> output layer  
+`visible layer` used for forward pass  
+`hidden layer` for backward pass  
 
 # Run result  
 
@@ -337,7 +342,6 @@ Blade Runner (1982) 5
 Stand by Me (1986) 5
 Indiana Jones and the Last Crusade (1989) 5
 ```
-# Todo   
 
 # Note
 If you want to run the program on your own computer sucessfully, some folders with files, which can be downloaded from websites are needed:

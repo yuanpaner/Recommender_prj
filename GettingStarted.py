@@ -2,9 +2,6 @@ from MovieLens import MovieLens
 from surprise import SVD
 from sys import exit
 
-
-
-
 def BuildAntiTestSetForUser(testSubject, trainset):
     fill = trainset.global_mean
 
