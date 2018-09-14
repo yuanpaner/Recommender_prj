@@ -1,5 +1,4 @@
 # Recommender_prj  
-I'm working on organizing the project again.  
 
 # Framework  
 `Run.py` file is used to run the chosen algorithm, by command line `python3 Run.py algorithm_name`.  
