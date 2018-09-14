@@ -39,27 +39,23 @@ works well in practice
 limited scalability -- Apache Spark  
 sparsity, sensitive to data noise  
 
+
 https://surprise.readthedocs.io/en/stable/knn_inspired.html  
 * (user-based)Cosine - similarity  
 adjusted cosine  
 Normalize the data to deal with people's different measure scale. But the normalization is only meaningful when the user has rated a lot of stuff.  
-
 * (item-based)Pearson similarity  
 the same thing as adjusted cosine basically  
-
 - [ ] try to build a filter to get high quality neighbors to measure the similarity instead of using all the other users/items to save computation.  
 - [ ] try to use `KNNWithMeans()` to do the user-based CF  
-
 - [ ] try Apache Spark if I have chance  
 
 **According to the output, the user-based CF is very different from the item-based one.**  
-
 It's different when we are doing the recommendation from calculating the accuracy or other measurement.  
 
 
 
-other method not used often  
-
+Other method not used often:
 * Spearman rank correlation  
 Pearson similarity based on ranks, not ratings.  
 * Mean Square difference (MSD)  
@@ -67,32 +63,25 @@ Pearson similarity based on ranks, not ratings.
 
 
 ## Model-Based by Matrix Factorization, learn the features  
-latent features  
-
 * PCA  
 * SVD  `R = M * Sigma * U_t`  
-implemented by SGD(surprise library has done this).  
+latent features  
+implemented by SGD(surprise library has done this)
 
 The performance is the best so far compared with content-based, behavior-based ones. Impressive.  
-
-Using machine learning achieve the parameters, has good performance but hard to explain.  `TuningSVD.py`.  
-
-- [ ] Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.  
+Using machine learning achieve the parameters, has good performance but hard to explain.  
+- [ ] Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.`TuningSVD.py`.  
 
 ## Deep Learning in Recommender by tensorflow  
 Recommendation is a pattern recognition problem actually, which is looking for a very complex pattern based on behavior of other people. So MF can be modeled by NN.  
 Here use Tensorflow Framework to implement NN.  
-I don't deal with the missing data, so the DL does **NOT** perform good enough. But it doesn't mean it is bad, just I need to find the right tool to deal with it. That's what I want to try next.  
+I don't deal with the missing data(sparsity issue), so the DL does **NOT** perform good enough. But it doesn't mean it is bad, just I need to find the right tool to deal with it. That's what I want to try next.  
 - [ ] deal with input sparsity.  
 
 * RBM(restricted boltzmann machine)  
-
-visible layer -> hidden layer -> output layer  
-`visible layer` used for forward pass  
-convert rating scores into categorical data; the input dimension is movie# * score_categorical_bit.  
+**visible layer -> hidden layer -> output layer**  
+`visible layer` used for forward pass. // convert rating scores into categorical data; the input dimension is movie# * score_categorical_bit.  
 `hidden layer` used for backward pass  
-
-Problem is sparsity.  
 
 * another way  
 
@@ -100,6 +89,7 @@ Basically it's not so much different from RBM. It normalize the score to 0 - 1, 
 When predicting, denormalizing is needed.  
 
 * CNN, session-based  
+
 It deals with sequence, like clickstream; it's really complex.  
 
 # Note  
