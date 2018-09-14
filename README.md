@@ -1,6 +1,37 @@
 # Recommender_prj
 I'm working on organizing the project again.
 
+
+# Think About it....
+
+## CF - Measuring Similarity and Sparsity
+
+CF has the problem of data sparsity. The data is even more important than the algorithm to choose.    
+Here the 100,000 rating data aren't enough to generate good similarity data, but I assume that I have enough data with high quality(it only contains users who have rated at least 20 movies, in the real world it might not be like this).  
+Sparsity also introduces some computational challenge; how to store the data efficiently. (sparse vector/matrix).   
+
+* (user-based)Cosine - similarity    
+adjusted cosine  
+Normalize the data to deal with people's different measure scale. But the normalization is only meaningful when the user has rated a lot of stuff.  
+
+* (item-based)Pearson similarity
+> the same thing as adjusted cosine basically
+
+- [ ] try to build a filter to get high quality neighbors to measure the similarity instead of using all the other users/items to save computation.
+
+**According to the output, the user-based CF is very different from the item-based one.**
+
+It's different when we are doing the recommendation from calculating the accuracy or other measurement.  
+
+> not used often  
+
+* Spearman rank correlation  
+Pearson similarity based on ranks, not ratings.  
+* Mean Square difference (MSD)
+* Jaccard Similarity  
+
+
+
 # Run result  
 
 * python3 Evaluator.py SvdRandom  
@@ -163,6 +194,60 @@ Babe (1995) 5
 Birdcage, The (1996) 5
 Carlito's Way (1993) 5
 Wizard of Oz, The (1939) 5
+```
+
+
+
+* python3 UserCF.py  
+```shell
+testUser 85, the ratings are:
+	Jumanji (1995)	:5.0
+	GoldenEye (1995)	:5.0
+	Braveheart (1995)	:5.0
+	Jerky Boys, The (1995)	:5.0
+	LÃ©on: The Professional (a.k.a. The Professional) (LÃ©on) (1994)	:5.0
+	Pulp Fiction (1994)	:5.0
+	Stargate (1994)	:5.0
+	Shawshank Redemption, The (1994)	:5.0
+	Star Trek: Generations (1994)	:5.0
+	Clear and Present Danger (1994)	:5.0
+	Speed (1994)	:5.0
+	True Lies (1994)	:5.0
+	Fugitive, The (1993)	:5.0
+	Jurassic Park (1993)	:5.0
+	Terminator 2: Judgment Day (1991)	:5.0
+	Mission: Impossible (1996)	:5.0
+	Rock, The (1996)	:5.0
+    ...
+
+
+Star Wars: Episode IV - A New Hope (1977) 114.57068319140309
+Matrix, The (1999) 107.72095292088618
+Star Wars: Episode V - The Empire Strikes Back (1980) 88.09116645357186
+Fight Club (1999) 79.26558201621258
+Back to the Future (1985) 78.78807368067915
+Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981) 78.77028125945898
+American Beauty (1999) 77.32300806156537
+Toy Story (1995) 76.37713266677879
+Godfather, The (1972) 76.21072562503657
+Star Wars: Episode VI - Return of the Jedi (1983) 74.71908773556109
+Lord of the Rings: The Fellowship of the Ring, The (2001) 74.37234120218191
+```
+
+
+* python3 ItemCF.py  
+```shellKiss of Death (1995) 16.910437073265502
+Amos & Andrew (1993) 16.861270021975354
+Edge of Seventeen (1998) 16.853845983977223
+Get Real (1998) 16.840092759084882
+Grace of My Heart (1996) 16.83866418909583
+Relax... It's Just Sex (1998) 16.825893097731395
+My Crazy Life (Mi vida loca) (1993) 16.825163372963015
+Set It Off (1996) 16.820045947032426
+Bean (1997) 16.81043113102984
+Joe's Apartment (1996) 16.804698282071367
+Lost & Found (1999) 16.78956315445952
+
 ```
 
 # Todo   

@@ -2,6 +2,8 @@
 """
 use suprise.KNNBasic() algorithm to compute the similarity between Items
 using users' rating
+
+And recommend the most similar items(movies) to movie:412
 """
 
 from MovieLens import MovieLens
@@ -9,13 +11,24 @@ from surprise import KNNBasic
 import heapq
 from collections import defaultdict
 from operator import itemgetter
+import MyDump
 
-# testSubject = '85' # Angels and Insects (1995)
-testSubject = '412' # Age of Innocence
+
+testSubject = '85' # user, not movie - Angels and Insects (1995)
+# testSubject = '412' # Age of Innocence
 k = 10
 
-ml = MovieLens()
-data = ml.loadMovieLensLatestSmall()
+# ml = MovieLens()
+# data = ml.loadMovieLensLatestSmall()
+
+ml = None
+data = None
+ml, data, _ = MyDump.LoadMovieLensData(True)
+if ml == None or data == None:
+    ml = MovieLens()
+    data = ml.loadMovieLensLatestSmall()
+
+
 
 trainSet = data.build_full_trainset()
 
@@ -23,31 +36,36 @@ sim_options = {'name': 'cosine',
                'user_based': False # item_item
                }
 
-model = KNNBasic(sim_options=sim_options)
-model.fit(trainSet)
-simsMatrix = model.compute_similarities()
+print(f'testUser {testSubject}, the ratings are:')
+for (movieID, rating) in sorted(ml.getUserRatings(int(testSubject)), key=lambda x: x[1], reverse = True):
+    print(f'\t{ml.movieID_to_name[movieID]}\t:{rating}')
+
+
+
+# model = KNNBasic(sim_options=sim_options)
+# model.fit(trainSet)
+# simsMatrix = model.compute_similarities()
+
+simsMatrix = None
+_,_,simsMatrix = MyDump.Load('item_similarity',1)
+if simsMatrix is None:
+
+    model = KNNBasic(sim_options=sim_options)
+    model.fit(trainSet) # calculate the similarity
+    simsMatrix = model.compute_similarities()
+
+    MyDump.Save('item_similarity', data = simsMatrix, verbose = 1)
+
+
+
 
 testUserInnerID = trainSet.to_inner_uid(testSubject)
-
 testUserRatings = trainSet.ur[testUserInnerID]
 
 # Get the top K items we rated
 kNeighbors = heapq.nlargest(k, testUserRatings, key=lambda t: t[1])
 
-# Music From Another Room (1998) 10.0
-# My Life Without Me (2003) 10.0
-# Simply Irresistible (1999) 9.96058526610992
-# Set It Off (1996) 9.96
-# April Fool's Day (1986) 9.928008768935916
-# Heart and Souls (1993) 9.927705686154587
-# Heartburn (1986) 9.924273370877941
-# Grace of My Heart (1996) 9.914766859820652
-# Boys Life (1995) 9.914209019256287
-# Creepshow 2 (1987) 9.913648635607869
-# Stepfather, The (1987) 9.907185199445436
-
-
-# tuning by threshold
+# tuning by threshold, using movies higher than threshold to work as neighbors to get similar movies to recommended
 kNeighbors = []
 for rating in testUserRatings:
     if rating[1] > 4.0:

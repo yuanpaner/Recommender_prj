@@ -8,17 +8,23 @@ from surprise import KNNBasic
 import heapq
 from collections import defaultdict
 from operator import itemgetter
+import MyDump
 
-testSubject = '85'
+
+testSubject = '85' # raw userId
 k = 10
 
 # Load our data set and compute the user similarity matrix
-ml = MovieLens()
-data = ml.loadMovieLensLatestSmall()
+ml = None
+data = None
+ml, data, _ = MyDump.LoadMovieLensData(True)
+if ml == None or data == None:
+    ml = MovieLens()
+    data = ml.loadMovieLensLatestSmall()
 
-# print(f'test user {testSubject}, the ratings are:')
-# for (movieID, rating) in sorted(ml.getUserRatings(int(testSubject)), key=lambda x: x[1], reverse = True):
-#     print(f'\t{ml.movieID_to_name[movieID]}\t:{rating}')
+print(f'testUser {testSubject}, the ratings are:')
+for (movieID, rating) in sorted(ml.getUserRatings(int(testSubject)), key=lambda x: x[1], reverse = True):
+    print(f'\t{ml.movieID_to_name[movieID]}\t:{rating}')
 
 
 
@@ -28,9 +34,16 @@ sim_options = {'name': 'cosine',
                'user_based': True
                }
 
-model = KNNBasic(sim_options=sim_options)
-model.fit(trainSet)
-simsMatrix = model.compute_similarities()
+simsMatrix = None
+_,_,simsMatrix = MyDump.Load('user_similarity',1)
+if simsMatrix is None:
+
+    model = KNNBasic(sim_options=sim_options)
+    model.fit(trainSet) # calculate the similarity
+    simsMatrix = model.compute_similarities()
+
+    MyDump.Save('user_similarity', data = simsMatrix, verbose = 1)
+
 
 # Get top N similar users to our test subject
 # (Alternate approach would be to select users up to some similarity threshold - try it!)

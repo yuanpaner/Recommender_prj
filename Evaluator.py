@@ -219,8 +219,7 @@ def BehaviorBasedCF():
     Random = NormalPredictor()
     evaluator.AddAlgorithm(Random, "Random")
 
-    # Fight!
-    evaluator.Evaluate(False) # True HitRate, long time
+    evaluator.Evaluate(False)  # load is also False, cause simsMatrix needs to be loaded; I haven't figured it out.
 
     evaluator.SampleTopNRecs(ml)
 
