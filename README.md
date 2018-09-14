@@ -7,7 +7,27 @@ I'm working on organizing the project again.
 `EvaluatedAlgorithm` is a wrapper of the algorithm which inherits from `surprise.AlgoBase` class.  
 `RecommenderMetrics` is a wrapper of the metrics used to measure the recommender, including `RMSE`, `HitRate` and etc.  
 
-# Think About it....  
+# Think about it...  
+
+* Data to use  
+The data is even more important than the algorithm to choose.  
+Here I use movielen 100,000 rating data set, which is large enough to get a good performance for some methods to recommendation.  
+Large data set introduces computation and sparsity issues.  
+Also, it's better to evaluate the dataset per se, like finding the outliers.
+
+* Hybrid  
+Recommendation is based on what we have.  
+Only one algorithm or method is far from good enough in the real world situation.  
+To deal with cold-start problem, content-based one is a good choice; or content-based one considering the new user's geo-information.  
+
+Recommendation is hard to evaluate; accuracy is not good enough but a proper one I use to test the recommender offline.  
+To consider novelty, diversity, we might combine the random choice of high-score items from different categories with what we recommend based on the prediction.   
+
+* Real-World case  
+Recommendation metrics are related to the purpose, especially the business purpose.  
+And some social ethical issues are also needed to consider to avoid some trouble.  
+
+# Implementation  
 
 ## Behavior-Based, CF - Measuring Similarity and Sparsity  
 
