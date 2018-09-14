@@ -163,7 +163,6 @@ def CompareSVDRandom():
     evaluator.AddAlgorithm(Random, "Random")
 
 
-    # Fight!
     start_t = time.time()
     evaluator.Evaluate(True, loader) # doTopN, loader
     print(f'------time consumption: {time.time() - start_t} for evaluator.Evaluate()')
