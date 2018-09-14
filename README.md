@@ -10,6 +10,7 @@ CF has the problem of data sparsity. The data is even more important than the al
 Here the 100,000 rating data aren't enough to generate good similarity data, but I assume that I have enough data with high quality(it only contains users who have rated at least 20 movies, in the real world it might not be like this).  
 Sparsity also introduces some computational challenge; how to store the data efficiently. (sparse vector/matrix).   
 
+https://surprise.readthedocs.io/en/stable/knn_inspired.html  
 * (user-based)Cosine - similarity    
 adjusted cosine  
 Normalize the data to deal with people's different measure scale. But the normalization is only meaningful when the user has rated a lot of stuff.  
@@ -18,6 +19,7 @@ Normalize the data to deal with people's different measure scale. But the normal
 > the same thing as adjusted cosine basically
 
 - [ ] try to build a filter to get high quality neighbors to measure the similarity instead of using all the other users/items to save computation.
+- [ ] try to use `KNNWithMeans()` to do the user-based CF  
 
 **According to the output, the user-based CF is very different from the item-based one.**
 
