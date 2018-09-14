@@ -1,13 +1,12 @@
 # driver file
-
-
-
 from EvaluationData import EvaluationData
 from EvaluatedAlgorithm import EvaluatedAlgorithm
 from ContentKNNAlgorithm import ContentKNNAlgorithm
 
 from MovieLens import MovieLens
 from surprise import SVD, SVDpp, NormalPredictor, KNNBasic
+from RBMAlgorithm import RBMAlgorithm
+from AutoRecAlgorithm import AutoRecAlgorithm
 
 import random
 import numpy as np
@@ -135,6 +134,44 @@ def MF():
     evaluator.Evaluate(doTopN = False, load = loader)
     evaluator.SampleTopNRecs(ml, loader)
 
+def RBMtest():
+    np.random.seed(0)
+    random.seed(0)
+
+    ml, evaluationData, rankings = MyDump.LoadMovieLensData(loader)
+
+    # Construct an Evaluator to, you know, evaluate them
+    evaluator = Evaluator(evaluationData, rankings, loader)
+
+    # RBM
+    # able to tune by trying more parameter combination
+    myRBM = RBMAlgorithm(epochs=20)
+    evaluator.AddAlgorithm(myRBM, "RBM")
+
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+    evaluator.Evaluate(doTopN = False, load = loader)
+
+    evaluator.SampleTopNRecs(ml, loader)
+
+def AutoRec():
+    np.random.seed(0)
+    random.seed(0)
+
+    ml, evaluationData, rankings = MyDump.LoadMovieLensData(loader)
+    evaluator = Evaluator(evaluationData, rankings, loader)
+
+    myAutoRec= RBMAlgorithm()
+    evaluator.AddAlgorithm(myAutoRec, "AutoRec")
+
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+    evaluator.Evaluate(doTopN = False, load = loader)
+
+    evaluator.SampleTopNRecs(ml, loader)
+
 def test():
     print('test the function dictionary')
 
@@ -143,6 +180,8 @@ functionDict = {
     "ContentRecs": ContentRecs,
     "BehaviorBasedCF": BehaviorBasedCF,
     "MF": MF,
+    "RBM": RBMtest,
+    "AutoRec": AutoRec,
     "test":test
 }
 
