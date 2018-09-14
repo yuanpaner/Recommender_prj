@@ -4,11 +4,16 @@ I'm working on organizing the project again.
 
 # Think About it....
 
-## CF - Measuring Similarity and Sparsity
+## Behavior-Based, CF - Measuring Similarity and Sparsity
 
 CF has the problem of data sparsity. The data is even more important than the algorithm to choose.    
 Here the 100,000 rating data aren't enough to generate good similarity data, but I assume that I have enough data with high quality(it only contains users who have rated at least 20 movies, in the real world it might not be like this).  
 Sparsity also introduces some computational challenge; how to store the data efficiently. (sparse vector/matrix).   
+
+Pro: works well in practice  
+Con:  
+limited scalability -- Apache Spark  
+sparsity, sensitive to data noise  
 
 https://surprise.readthedocs.io/en/stable/knn_inspired.html  
 * (user-based)Cosine - similarity    
@@ -20,6 +25,8 @@ Normalize the data to deal with people's different measure scale. But the normal
 
 - [ ] try to build a filter to get high quality neighbors to measure the similarity instead of using all the other users/items to save computation.
 - [ ] try to use `KNNWithMeans()` to do the user-based CF  
+
+- [ ] try Apache Spark if I have chance
 
 **According to the output, the user-based CF is very different from the item-based one.**
 
@@ -33,6 +40,17 @@ Pearson similarity based on ranks, not ratings.
 * Jaccard Similarity  
 
 
+## Model-Based, learn the features  
+latent features  
+
+* PCA  
+* SVD  `R = M * Sigma * U_t`  
+implemented by SGD(surprise library has done this).  
+
+The performance is the best so far compared with content-based, behavior-based ones. Impressive.  
+
+* Tuning SVD  
+Try more parameter combinations, ex learning rate.  
 
 # Run result  
 

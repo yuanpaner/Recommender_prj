@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu May  3 11:11:13 2018
-
-@author: Frank
-"""
-
 from MovieLens import MovieLens
 from surprise import SVD, SVDpp
+# SVD++ merely predict items if implicit rating
 from surprise import NormalPredictor
 from Evaluator import Evaluator
 
