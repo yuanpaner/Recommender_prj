@@ -19,7 +19,6 @@ Also, it's better to evaluate the dataset per se, like finding the outliers.
 Recommendation is based on what we have.  
 Only one algorithm or method is far from good enough in the real world situation.  
 To deal with cold-start problem, content-based one is a good choice; or content-based one considering the new user's geo-information.  
-
 Recommendation is hard to evaluate; accuracy is not good enough but a proper one I use to test the recommender offline.  
 To consider novelty, diversity, we might combine the random choice of high-score items from different categories with what we recommend based on the prediction.   
 
