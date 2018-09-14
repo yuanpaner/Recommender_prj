@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" content-base: using the items' property;
+""" content-base: using the items' property(genre and year);
     nonrelated to the behavior
 
     Here use the movie genre to calculate this,

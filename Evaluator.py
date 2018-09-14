@@ -20,6 +20,7 @@ from ContentKNNAlgorithm import ContentKNNAlgorithm
 from MovieLens import MovieLens
 from surprise import SVD
 from surprise import NormalPredictor
+from surprise import KNNBasic
 
 import random
 import numpy as np
@@ -171,6 +172,8 @@ def CompareSVDRandom():
 def ContentRecs():
     """ for this content-based(item) recommender
         calculate items' cosine similarity matrix in alg.fit()
+
+        I don't test `HitRate` for `topN` recommendation, because here it's impossible to do that. What I recommend by this algorithm are all the movies the user haven't rated.
     """
     np.random.seed(0)
     random.seed(0)
@@ -195,12 +198,40 @@ def ContentRecs():
     # recommend 10(default) items
     evaluator.SampleTopNRecs(ml)
 
+def BehaviorBasedCF():
+    np.random.seed(0)
+    random.seed(0)
+
+    # Load up common data set for the recommender algorithms
+    (ml, evaluationData, rankings) = MyDump.LoadMovieLensData(loader)
+
+    # Construct an Evaluator to, you know, evaluate them
+    evaluator = Evaluator(evaluationData, rankings, load = True)
+
+    # User-based KNN
+    UserKNN = KNNBasic(sim_options = {'name': 'cosine', 'user_based': True})
+    evaluator.AddAlgorithm(UserKNN, "User KNN")
+
+    # Item-based KNN
+    ItemKNN = KNNBasic(sim_options = {'name': 'cosine', 'user_based': False})
+    evaluator.AddAlgorithm(ItemKNN, "Item KNN")
+
+    # Just make random recommendations
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+    # Fight!
+    evaluator.Evaluate(False) # True HitRate, long time
+
+    evaluator.SampleTopNRecs(ml)
+
 def test():
     print('test the function dictionary')
 
 functionDict = {
     "SvdRandom": CompareSVDRandom,
     "ContentRecs": ContentRecs,
+    "BehaviorBasedCF": BehaviorBasedCF,
     "test":test
 }
 
