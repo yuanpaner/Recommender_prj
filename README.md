@@ -10,8 +10,9 @@ CF has the problem of data sparsity. The data is even more important than the al
 Here the 100,000 rating data aren't enough to generate good similarity data, but I assume that I have enough data with high quality(it only contains users who have rated at least 20 movies, in the real world it might not be like this).  
 Sparsity also introduces some computational challenge; how to store the data efficiently. (sparse vector/matrix).   
 
-Pro: works well in practice  
-Con:  
+* Pro:  
+works well in practice  
+* Con:  
 limited scalability -- Apache Spark  
 sparsity, sensitive to data noise  
 
@@ -21,7 +22,7 @@ adjusted cosine
 Normalize the data to deal with people's different measure scale. But the normalization is only meaningful when the user has rated a lot of stuff.  
 
 * (item-based)Pearson similarity
-> the same thing as adjusted cosine basically
+the same thing as adjusted cosine basically
 
 - [ ] try to build a filter to get high quality neighbors to measure the similarity instead of using all the other users/items to save computation.
 - [ ] try to use `KNNWithMeans()` to do the user-based CF  
@@ -32,7 +33,9 @@ Normalize the data to deal with people's different measure scale. But the normal
 
 It's different when we are doing the recommendation from calculating the accuracy or other measurement.  
 
-> not used often  
+
+
+other method not used often  
 
 * Spearman rank correlation  
 Pearson similarity based on ranks, not ratings.  
@@ -49,10 +52,9 @@ implemented by SGD(surprise library has done this).
 
 The performance is the best so far compared with content-based, behavior-based ones. Impressive.  
 
-Using machine learning achieve the parameters, has good performance but hard to explain.  
-> Tuning SVD  
+Using machine learning achieve the parameters, has good performance but hard to explain.  `TuningSVD.py`.   
 
-Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.    
+- [ ] Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.    
 
 ## Deep Learning in Recommender by tensorflow  
 
