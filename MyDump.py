@@ -45,10 +45,29 @@ def Load(file_name, verbose = 0):
         return None, None, None
 
 
-def LoadMovieLensData():
-    ml = MovieLens()
-    print("\nLoading movie ratings...")
-    data = ml.loadMovieLensLatestSmall()
-    print("Computing movie popularity ranks so we can measure novelty later...")
-    rankings = ml.getPopularityRanks() # for novelty
+def LoadMovieLensData(loader = False):
+    if loader:
+        _, _, data = Load('ratingsDataset',1)
+        _, _, rankings = Load('rankings',1)
+        _, _, ml = Load('ml',1)
+        # ml = MovieLens()
+        if data == None or rankings == None or ml == None:
+            ml = MovieLens()
+            print("\nLoading movie ratings...")
+            data = ml.loadMovieLensLatestSmall() # will assign ml the name-id dictionary
+            print("Computing movie popularity ranks so we can measure novelty later...")
+            rankings = ml.getPopularityRanks() # for novelty
+            Save('ratingsDataset', data = data, verbose = 1)
+            Save('rankings', data = rankings, verbose = 1)
+            Save('ml', data = ml, verbose = 1)
+    else :
+        ml = MovieLens()
+        print("\nNo loader, Loading movie ratings...")
+        data = ml.loadMovieLensLatestSmall()
+        print("No loader, Computing movie popularity ranks so we can measure novelty later...")
+        rankings = ml.getPopularityRanks()
+    # print("\nLoading movie ratings...")
+    # data = ml.loadMovieLensLatestSmall()
+    # print("Computing movie popularity ranks so we can measure novelty later...")
+    # rankings = ml.getPopularityRanks() # for novelty
     return (ml, data, rankings)

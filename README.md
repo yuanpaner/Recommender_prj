@@ -3,7 +3,7 @@ I'm working on organizing the project again.
 
 # Run result  
 
-* python3 Evaluator.py  
+* python3 Evaluator.py SvdRandom  
 pick the algorithm, train, predict, and measure it.  
 train and measure take about 522s; measure(calculate RMSE, HR, Coverage and etc.) takes about 118s.
 ```shell

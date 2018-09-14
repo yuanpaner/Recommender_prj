@@ -13,6 +13,8 @@ import math
 import numpy as np
 import heapq
 
+import MyDump
+
 class ContentKNNAlgorithm(AlgoBase):
 
     def __init__(self, k=40, sim_options={}):
@@ -30,24 +32,35 @@ class ContentKNNAlgorithm(AlgoBase):
         years = ml.getYears()
         # mes = ml.getMiseEnScene()
 
-        print("Computing content-based similarity matrix...")
+        print("Computing content-based (item) similarity matrix...")
 
         # Compute genre distance for every movie combination as a 2x2 matrix
-        self.similarities = np.zeros((self.trainset.n_items, self.trainset.n_items))
+        # using cosine similarity, no need normalize user's rating scale
 
-        for thisRating in range(self.trainset.n_items):
-            if (thisRating % 100 == 0): # print one index every 100 items to show the process
-                print(thisRating, " of ", self.trainset.n_items)
-            for otherRating in range(thisRating+1, self.trainset.n_items):
-                thisMovieID = int(self.trainset.to_raw_iid(thisRating))
-                otherMovieID = int(self.trainset.to_raw_iid(otherRating))
-                genreSimilarity = self.computeGenreSimilarity(thisMovieID, otherMovieID, genres)
-                yearSimilarity = self.computeYearSimilarity(thisMovieID, otherMovieID, years)
-                #mesSimilarity = self.computeMiseEnSceneSimilarity(thisMovieID, otherMovieID, mes)
-                self.similarities[thisRating, otherRating] = genreSimilarity * yearSimilarity # * mesSimilarity
-                self.similarities[otherRating, thisRating] = self.similarities[thisRating, otherRating]
 
-        print("...done.")
+
+        # only for movieLens-small set
+        itemSim = None
+        _, _, itemSim = MyDump.Load('ml-latest-small-item-similarity', 1)
+
+        if itemSim is not None:
+            self.similarities = itemSim
+        else:
+            self.similarities = np.zeros((self.trainset.n_items, self.trainset.n_items))
+
+            for thisRating in range(self.trainset.n_items):
+                if (thisRating % 100 == 0): # print one index every 100 items to show the process
+                    print(thisRating, " of ", self.trainset.n_items)
+                for otherRating in range(thisRating+1, self.trainset.n_items):
+                    thisMovieID = int(self.trainset.to_raw_iid(thisRating))
+                    otherMovieID = int(self.trainset.to_raw_iid(otherRating))
+                    genreSimilarity = self.computeGenreSimilarity(thisMovieID, otherMovieID, genres)
+                    yearSimilarity = self.computeYearSimilarity(thisMovieID, otherMovieID, years)
+                    #mesSimilarity = self.computeMiseEnSceneSimilarity(thisMovieID, otherMovieID, mes)
+                    self.similarities[thisRating, otherRating] = genreSimilarity * yearSimilarity # * mesSimilarity
+                    self.similarities[otherRating, thisRating] = self.similarities[thisRating, otherRating]
+            MyDump.Save('ml-latest-small-item-similarity', None, None, self.similarities, 1)
+            print("...done.")
 
         return self
 

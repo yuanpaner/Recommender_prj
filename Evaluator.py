@@ -15,6 +15,7 @@
 """
 from EvaluationData import EvaluationData
 from EvaluatedAlgorithm import EvaluatedAlgorithm
+from ContentKNNAlgorithm import ContentKNNAlgorithm
 
 from MovieLens import MovieLens
 from surprise import SVD
@@ -23,8 +24,11 @@ from surprise import NormalPredictor
 import random
 import numpy as np
 import time
+import sys
 
 import MyDump
+
+loader = True
 
 class Evaluator:
 
@@ -58,6 +62,9 @@ class Evaluator:
             print("Novelty:   Average popularity rank of recommended items. Higher means more novel.")
 
     def Evaluate(self, doTopN, load = False):
+        """ use "RMSE", "MAE" to measure prediction accuracy by spliting the data into train:test = 75:25
+            "HR", "cHR", "ARHR" to measure the topN recommendation
+        """
         results = {}
         for algorithm in self.algorithms:
             print("\nEvaluating ", algorithm.GetName(), "...")
@@ -81,7 +88,9 @@ class Evaluator:
         # LegendPrint()
 
     def SampleTopNRecs(self, ml, testSubject=85, k=10):
-
+        """ after predicting the GetAntiTestSetForUser data set,
+            return the sorted top-k items
+        """
         for algo in self.algorithms:
             print("\nUsing recommender ", algo.GetName())
 
@@ -116,10 +125,10 @@ class Evaluator:
 #     return (ml, data, rankings)
 
 
-def have_fun():
+def CompareSVDRandom():
     np.random.seed(0)
     random.seed(0)
-    loader = True
+    # loader = True
     start_t = time.time()
 
     # Load up common data set for the recommender algorithms
@@ -127,12 +136,13 @@ def have_fun():
     # MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
     # MyDump.Save('rankings', data = rankings, verbose = 1)
 
-    _,_,evaluationData = MyDump.Load('ratingsDataset', 1)
-    _,_,rankings = MyDump.Load('rankings',1)
-    if evaluationData == None or rankings == None:
-        (_, evaluationData, rankings) = MyDump.LoadMovieLensData() # meat
-        MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
-        MyDump.Save('rankings', data = rankings, verbose = 1)
+    # _,_,evaluationData = MyDump.Load('ratingsDataset', 1)
+    # _,_,rankings = MyDump.Load('rankings',1)
+    # if evaluationData == None or rankings == None:
+    #     (_, evaluationData, rankings) = MyDump.LoadMovieLensData() # meat
+    #     MyDump.Save('ratingsDataset', data = evaluationData, verbose = 1)
+    #     MyDump.Save('rankings', data = rankings, verbose = 1)
+    _, evaluationData, rankings = MyDump.LoadMovieLensData(loader)
     print(f'------time consumption: {time.time() - start_t} for LoadMovieLensData()')
     start_t = time.time()
 
@@ -154,9 +164,56 @@ def have_fun():
 
     # Fight!
     start_t = time.time()
-    evaluator.Evaluate(True, loader) # current not consider the topN
+    evaluator.Evaluate(True, loader) # doTopN, loader
     print(f'------time consumption: {time.time() - start_t} for evaluator.Evaluate()')
     start_t = time.time()
 
+def ContentRecs():
+    """ for this content-based(item) recommender
+        calculate items' cosine similarity matrix in alg.fit()
+    """
+    np.random.seed(0)
+    random.seed(0)
+    # loader = True
+
+    # Load up common data set for the recommender algorithms
+    # print(f'call ContentRecs()\nloader = {loader}')
+    (ml, evaluationData, rankings) = MyDump.LoadMovieLensData(loader)
+
+    # Construct an Evaluator to, you know, evaluate them
+    evaluator = Evaluator(evaluationData, rankings, load = True)
+
+    contentKNN = ContentKNNAlgorithm()
+    evaluator.AddAlgorithm(contentKNN, "ContentKNN")
+
+    # Just make random recommendations
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+    evaluator.Evaluate(False, True) # not topN, able load
+
+    # recommend 10(default) items
+    evaluator.SampleTopNRecs(ml)
+
+def test():
+    print('test the function dictionary')
+
+functionDict = {
+    "SvdRandom": CompareSVDRandom,
+    "ContentRecs": ContentRecs,
+    "test":test
+}
+
+def main(functionName):
+    if not functionName in functionDict.keys():
+        raise ValueError('wrong function name')
+    functionDict[functionName]()
+
 if __name__ == '__main__':
-    have_fun()
+    if len(sys.argv) > 1:
+        funcName = sys.argv[1]
+    else:
+        # funcName = "test"
+        funcName = input("Please input function name: ")
+
+    main(funcName)
