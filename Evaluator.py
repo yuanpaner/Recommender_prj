@@ -88,21 +88,33 @@ class Evaluator:
 
         # LegendPrint()
 
-    def SampleTopNRecs(self, ml, testSubject=85, k=10):
+    def SampleTopNRecs(self, ml, load = False, testSubject=85, k=10):
         """ after predicting the GetAntiTestSetForUser data set,
             return the sorted top-k items
         """
         for algo in self.algorithms:
             print("\nUsing recommender ", algo.GetName())
 
-            print("\nBuilding recommendation model...")
             trainSet = self.dataset.GetFullTrainSet()
-            algo.GetAlgorithm().fit(trainSet)
-
-            print("Computing recommendations...")
             testSet = self.dataset.GetAntiTestSetForUser(testSubject)
+            if load:
+                predictions, algo_sample, _ = MyDump.Load(algo.GetName() + '_sampleTopNRecs', 1)
+                if algo_sample == None or predictions == None:
+                    print("\nBuilding recommendation model...")
+                    algo.GetAlgorithm().fit(trainSet)
+                    print("Computing recommendations...")
+                    predictions = algo.GetAlgorithm().test(testSet)
+                    MyDump.Save(algo.GetName() + '_sampleTopNRecs', predictions, algo, None, 1)
+            else :
+                print("\nBuilding recommendation model...")
+                # trainSet = self.dataset.GetFullTrainSet()
+                algo.GetAlgorithm().fit(trainSet)
 
-            predictions = algo.GetAlgorithm().test(testSet)
+                print("Computing recommendations...")
+                # testSet = self.dataset.GetAntiTestSetForUser(testSubject)
+
+                predictions = algo.GetAlgorithm().test(testSet)
+
 
             recommendations = []
 

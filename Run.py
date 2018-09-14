@@ -116,6 +116,25 @@ def BehaviorBasedCF():
 
     evaluator.SampleTopNRecs(ml)
 
+def MF():
+    """ the idea behind is math, latent features
+        implementation is simple out of library source
+    """
+    np.random.seed(0)
+    random.seed(0)
+    ml, evaluationData, rankings = MyDump.LoadMovieLensData(loader)
+    evaluator = Evaluator(evaluationData, rankings, loader)
+
+    mySVD = SVD(random_state=10)
+    evaluator.AddAlgorithm(mySVD, "SVD") # the same with before
+    mySVDpp = SVDpp(random_state=10)
+    evaluator.AddAlgorithm(mySVDpp, "SVDpp")
+    Random = NormalPredictor()
+    evaluator.AddAlgorithm(Random, "Random")
+
+    evaluator.Evaluate(doTopN = False, load = loader)
+    evaluator.SampleTopNRecs(ml, loader)
+
 def test():
     print('test the function dictionary')
 
@@ -123,6 +142,7 @@ functionDict = {
     "SvdRandom": CompareSVDRandom,
     "ContentRecs": ContentRecs,
     "BehaviorBasedCF": BehaviorBasedCF,
+    "MF": MF,
     "test":test
 }
 

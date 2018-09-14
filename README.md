@@ -49,12 +49,17 @@ implemented by SGD(surprise library has done this).
 
 The performance is the best so far compared with content-based, behavior-based ones. Impressive.  
 
-* Tuning SVD  
-Try more parameter combinations, ex learning rate.  
+Using machine learning achieve the parameters, has good performance but hard to explain.  
+> Tuning SVD  
+
+Try more parameter combinations, ex learning rate, epoch.  Surprise supports the tool to do this.    
+
+## Deep Learning in Recommender by tensorflow  
+
 
 # Run result  
 
-* python3 Evaluator.py SvdRandom  
+* python3 Run.py SvdRandom  
 pick the algorithm, train, predict, and measure it.  
 train and measure take about 522s; measure(calculate RMSE, HR, Coverage and etc.) takes about 118s.
 ```shell
@@ -95,7 +100,7 @@ Random     1.4385     1.1478     0.0149     0.0149     0.0043     1.0000     0.0
 ------time consumption: 522.2393069267273 for evaluator.Evaluate()
 ```
 
-* python3 Evaluator.py ContentRecs  
+* python3 Run.py ContentRecs  
 I don't test `HitRate` for `topN` recommendation, because here it's impossible to do that.   
 What I recommend by this algorithm comes from all the movies the user haven't rated.  
 
@@ -134,7 +139,7 @@ Finding Nemo (2003) 5
 ```
 
 
-* python3 Evaluator.py BehaviorBasedCF
+* python3 Run.py BehaviorBasedCF
 
 ```shell
 Evaluating  User KNN ...
@@ -270,6 +275,66 @@ Lost & Found (1999) 16.78956315445952
 
 ```
 
+
+* python3 Run.py MF  
+```shell
+...
+Algorithm  RMSE       MAE       
+SVD        0.9039     0.6984    
+SVD++      0.8943     0.6887    
+Random     1.4359     1.1493    
+...
+Using recommender  SVD
+
+Building recommendation model...
+Computing recommendations...
+
+We recommend:
+Gladiator (1992) 4.520884890007874
+Philadelphia Story, The (1940) 4.420701711947352
+Stand by Me (1986) 4.395958975217837
+Moon (2009) 4.372613693384055
+Happiness (1998) 4.369493252705134
+American Graffiti (1973) 4.353470600109924
+And Your Mother Too (Y tu mamÃ¡ tambiÃ©n) (2001) 4.349192492630499
+Wallace & Gromit: A Close Shave (1995) 4.3154412154304085
+Band of Brothers (2001) 4.315414828016616
+Seven Samurai (Shichinin no samurai) (1954) 4.311102920673881
+
+Using recommender  SVD++
+
+Building recommendation model...
+Computing recommendations...
+
+We recommend:
+Lock, Stock & Two Smoking Barrels (1998) 4.60422766627621
+The Imitation Game (2014) 4.457817607681913
+Amadeus (1984) 4.322529285260794
+Indiana Jones and the Last Crusade (1989) 4.289355864317423
+Happiness (1998) 4.260333724293291
+Harry Potter and the Sorcerer's Stone (a.k.a. Harry Potter and the Philosopher's Stone) (2001) 4.229511982111833
+Wings of Desire (Himmel Ã¼ber Berlin, Der) (1987) 4.2247114809512345
+Grand Day Out with Wallace and Gromit, A (1989) 4.223352198994352
+Charade (1963) 4.208953110263677
+Snatch (2000) 4.204477673848874
+
+Using recommender  Random
+
+Building recommendation model...
+Computing recommendations...
+
+We recommend:
+Usual Suspects, The (1995) 5
+Legends of the Fall (1994) 5
+Trainspotting (1996) 5
+Titanic (1997) 5
+Happiness (1998) 5
+Big Daddy (1999) 5
+Spider-Man 2 (2004) 5
+Blade Runner (1982) 5
+Stand by Me (1986) 5
+Indiana Jones and the Last Crusade (1989) 5
+```
 # Todo   
 
 # Note
